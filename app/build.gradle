@@ -1,0 +1,99 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'walle'
+
+walle {
+    // 指定渠道包的输出路径
+    apkOutputFolder = new File("${project.buildDir}/outputs/channels")
+    // 定制渠道包的APK的文件名称
+    apkFileNameFormat = '${appName}-${packageName}-${channel}-${buildType}-v${versionName}-${versionCode}-${buildTime}.apk'
+    // 渠道配置文件
+    channelFile = new File("${project.getProjectDir()}/channel")
+}
+
+def ext = rootProject.ext.android
+def depend = rootProject.ext.dependencies
+
+android {
+    compileSdkVersion ext.compileSdkVersion
+    buildToolsVersion ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.ronin.phonenews"
+        minSdkVersion ext.minSdkVersion
+        targetSdkVersion ext.targetSdkVersion
+        versionCode ext.versionCode
+        versionName ext.versionName
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        myConfig {
+            storeFile file("com.ronin.keystore.jks")
+            keyAlias "ronindong"
+            keyPassword "ronindong"
+            storePassword "ronindong"
+        }
+    }
+
+
+    buildTypes {
+        debug {
+//            ext.alwaysUpdateBuildId = false
+        }
+
+        release {
+            signingConfig signingConfigs.myConfig
+            shrinkResources false
+            minifyEnabled true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/gson.properties'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'LICENSE.txt'
+
+    }
+
+}
+
+
+apply plugin: 'replugin-plugin-gradle'
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testImplementation 'junit:junit:4.12'
+    implementation project(':magicindicator')
+    implementation project(':pullrefreshlibrary')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
+
+    implementation depend["appcompat_v7"]
+    implementation depend["design"]
+    implementation depend["constraint"]
+    implementation depend["cardview_v7"]
+
+    compile depend["brvah"]
+    compile depend["glide"]
+    compile depend["gson"]
+    compile depend["photoview"]
+    compile depend["rxandroid"]
+    compile depend["retrofit"]
+    compile depend["converter_gson"]
+    compile depend["adapter_rxjava"]
+    compile depend["okhttp3"]
+
+    implementation depend["walle"]
+
+}

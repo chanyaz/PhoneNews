@@ -1,0 +1,33 @@
+apply plugin: 'com.android.library'
+def ext = rootProject.ext.android
+android {
+    compileSdkVersion ext.compileSdkVersion
+    buildToolsVersion ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion ext.minSdkVersion
+        targetSdkVersion ext.targetSdkVersion
+        versionCode ext.versionCode
+        versionName ext.versionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+apply plugin: 'replugin-plugin-gradle'
+dependencies {
+    implementation "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile "junit:junit:${ext.junitVersion}"
+    implementation "com.android.support:support-v4:${ext.supportVersion}"
+}
