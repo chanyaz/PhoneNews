@@ -2,15 +2,20 @@ package com.ronin.cc.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
+import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import java.util.regex.Pattern
 
 /**
  * Created by ronindong on 2017/4/1.
  */
+
+
 
 inline fun <T> supportApi(sdkInt: Int, code: () -> T) {
     if (Build.VERSION.SDK_INT >= sdkInt) {
@@ -81,4 +86,24 @@ fun Context.isMobile(): Boolean {
     return false
 }
 
+fun Context.toast(text:CharSequence){
+    Toast.makeText(this,text,Toast.LENGTH_SHORT).show()
+}
+fun Context.toast(@StringRes resId: Int){
+    Toast.makeText(this,resId,Toast.LENGTH_SHORT).show()
+}
 
+
+fun getMetaValue(cx: Context, metaName: String): String {
+
+    val packageManager = cx.packageManager
+    try {
+        val info = packageManager.getApplicationInfo(cx.packageName, PackageManager.GET_META_DATA)
+        val metaValue = info.metaData.getString(metaName.toString()).toString()
+        return metaValue
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+        return metaName.toString()
+    }
+
+}

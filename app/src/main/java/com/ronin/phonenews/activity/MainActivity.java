@@ -6,11 +6,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ronin.cc.util.ContantsKt;
+import com.ronin.cc.util.ExtKt;
 import com.ronin.phonenews.R;
+
+import cn.waps.AppConnect;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +35,25 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this,NewsActivity.class));
             }
         });
+        initWapsAd();
+    }
+
+    /**
+     * 初始化waps广告
+     */
+    private void initWapsAd() {
+        String app_pid = ExtKt.getMetaValue(getApplicationContext(), "UMENG_CHANNEL");
+        // 初始化统计器，并通过代码设置APP_ID, APP_PID
+        if (!TextUtils.isEmpty(app_pid)) {
+            AppConnect.getInstance(ContantsKt.APP_ID, app_pid, this);
+        } else {
+            AppConnect.getInstance(ContantsKt.APP_ID, this);
+        }
+        //初始化插屏ad
+        AppConnect.getInstance(this).initPopAd(this);
+
+        // 初始化卸载广告
+        AppConnect.getInstance(this).initUninstallAd(this);
     }
 
     @Override

@@ -1,61 +1,145 @@
 package com.ronin.phonenews.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.ronin.cc.adapter.CompanyListAdapter
+import com.ronin.cc.adapter.NewsListAdapter
+import com.ronin.cc.http.XHttp
 import com.ronin.cc.loadmore.CustomLoadMoreView
 import com.ronin.cc.util.isNetwork
+import com.ronin.cc.util.toast
 import com.ronin.phonenews.R
+import com.ronin.phonenews.bean.NewsBean
 import com.ronin.phonenews.titles.ScaleTransitionPagerTitleView
+import com.ronin.phonenews.util.XThread
 import com.ronin.pullrefreshlibrary.PullToRefreshView
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DefaultObserver
+import io.reactivex.schedulers.Schedulers
+import net.lucode.hackware.magicindicator.FragmentContainerHelper
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.BezierPagerIndicator
-import java.util.*
 
 class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
         BaseQuickAdapter.RequestLoadMoreListener {
-    override fun onRefresh() {
 
-    }
+    val newsLinkMap = linkedMapOf(
+            Pair("social", "社会新闻"),
+            Pair("guonei", "国内新闻"),
+            Pair("world", "国际新闻"),
+            Pair("huabian", "娱乐新闻"),
+            Pair("tiyu", "体育新闻"),
+            Pair("nba", "NBA新闻"),
+            Pair("football", "足球新闻"),
+            Pair("keji", "科技新闻"),
+            Pair("startup", "科技新闻"),
+            Pair("apple", "苹果新闻"),
+            Pair("military", "军事新闻"),
+            Pair("mobile", "移动互联"),
+            Pair("travel", "旅游咨询"),
+            Pair("health", "健康知识"),
+            Pair("qiwen", "奇闻异事"),
+            Pair("meinv", "美女图片"),
+            Pair("vr", "VR科技"),
+            Pair("it", "IT资讯")
+    )
+    private val mDataList = newsLinkMap.values.toList()
+    private val mKeyList = newsLinkMap.keys.toList()
 
-    override fun onLoadMoreRequested() {
-
-    }
-
-    private val CHANNELS = arrayOf("CUPCAKE", "DONUT", "ECLAIR", "GINGERBREAD",
-            "HONEYCOMB", "ICE_CREAM_SANDWICH", "JELLY_BEAN", "KITKAT", "LOLLIPOP", "M", "NOUGAT")
-    private val mDataList = Arrays.asList(*CHANNELS)
+    private var mCurIndex = 0
+    private var mCurPage = 1
+    private var mCurSearchWord = "北京"
 
     var indicator: MagicIndicator? = null
+    val nagvHelper = FragmentContainerHelper()
 
     internal var swipeLayout: PullToRefreshView? = null
     internal var recyclerView: RecyclerView? = null
 
-    val adapter = CompanyListAdapter()
+    val adapter = NewsListAdapter()
 
     lateinit var mErrorView: View
     lateinit var mLoadingView: View
-    lateinit var mNoDataView: View
+    lateinit var mEmptyView: View
+
+    val mHandler = @SuppressLint("HandlerLeak")
+    object : Handler() {
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news)
+        XThread.execute(Runnable {
+            initMagicIndicator()
+            initRecyclerView()
+            initData()
+        })
 
-        initMagicIndicator()
-
-        initRecyclerView()
     }
+
+    private fun initData() {
+
+        requestData(mKeyList[mCurIndex], isInit = true)
+
+    }
+
+    private fun requestData(path: String, isInit: Boolean = false) {
+        val rand = if (isInit) {
+            mCurPage = 1
+            1
+        } else {
+            0
+        }
+
+        XHttp.serviceApi.getNewsList(path, word = mCurSearchWord,
+                page = mCurPage, rand = rand)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : DefaultObserver<NewsBean>() {
+                    override fun onComplete() {
+                        adapter.loadMoreComplete()
+                    }
+
+                    override fun onError(e: Throwable?) {
+
+                    }
+
+                    override fun onNext(t: NewsBean?) {
+                        if (t!!.code == 200 && t.newslist!!.isNotEmpty()) {
+                            if (isInit) {
+                                adapter.data.clear()
+                                adapter.setNewData(t.newslist)
+                            } else {
+                                adapter.addData(t.newslist)
+                            }
+                            adapter.notifyDataSetChanged()
+
+                        } else {
+                            adapter.emptyView = mEmptyView
+                            adapter.setEnableLoadMore(false)
+                        }
+                    }
+
+                })
+    }
+
 
     private fun initRecyclerView() {
         recyclerView = findViewById(R.id.recyclerView) as RecyclerView
@@ -63,7 +147,7 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
 
         swipeLayout!!.setOnRefreshListener(this)
         swipeLayout!!.setOnClickListener {
-
+            toast("pull image")
         }
 
         mErrorView = layoutInflater!!.inflate(R.layout.error_view,
@@ -71,15 +155,15 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
         mErrorView.setOnClickListener {
             onRefresh()
         }
-        mNoDataView = layoutInflater!!.inflate(R.layout.empty_view,
+        mEmptyView = layoutInflater!!.inflate(R.layout.empty_view,
                 recyclerView!!.parent as ViewGroup, false)
-        mNoDataView.setOnClickListener {
+        mEmptyView.setOnClickListener {
             onRefresh()
         }
         mLoadingView = layoutInflater!!.inflate(R.layout.loading_view,
                 recyclerView!!.parent as ViewGroup, false)
 
-        //        infoAdapter.openLoadAnimation()
+        //        adapter.openLoadAnimation()
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         adapter.setOnLoadMoreListener(this, recyclerView)
         adapter.setNotDoAnimationCount(3)
@@ -87,8 +171,16 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
         recyclerView!!.layoutManager = LinearLayoutManager(this)
         recyclerView!!.adapter = adapter
         adapter.setLoadMoreView(CustomLoadMoreView())
-        adapter.setOnItemLongClickListener { adapter, view, position ->
-
+        adapter.setOnItemLongClickListener { _, view, position ->
+            val bean = adapter.data[position]
+            bean.url;
+            WebViewActivity.action(this,bean.title,bean.url)
+            true
+        }
+        adapter.setOnItemClickListener { _, view, position ->
+            val bean = adapter.data[position]
+            bean.url;
+            WebViewActivity.action(this,bean.title,bean.url)
             true
         }
         adapter.emptyView = mLoadingView
@@ -99,13 +191,16 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
 
     }
 
+
     private fun initMagicIndicator() {
         indicator = findViewById(R.id.magic_indicator) as MagicIndicator
         indicator?.setBackgroundColor(Color.WHITE)
+        nagvHelper.handlePageSelected(0, false)
         val commonNavigator = CommonNavigator(this)
+//        commonNavigator.isSkimOver = true
         commonNavigator.adapter = object : CommonNavigatorAdapter() {
             override fun getCount(): Int {
-                return mDataList?.size ?: 0
+                return mDataList.size
             }
 
             override fun getTitleView(context: Context, index: Int): IPagerTitleView {
@@ -115,8 +210,12 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
                 simplePagerTitleView.normalColor = Color.GRAY
                 simplePagerTitleView.selectedColor = Color.BLACK
                 simplePagerTitleView.setOnClickListener({
-                    println("index=$index,title=${CHANNELS[index]}")
-
+                    if (mCurIndex != index) {
+                        mCurIndex = index
+                        nagvHelper.handlePageSelected(index)
+                        recyclerView!!.smoothScrollToPosition(0)
+                        requestData(mKeyList[mCurIndex], true)
+                    }
                 })
 
                 return simplePagerTitleView
@@ -133,7 +232,40 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
             }
         }
         indicator?.navigator = commonNavigator
-
+        nagvHelper.attachMagicIndicator(indicator)
     }
+
+
+    override fun onRefresh() {
+        adapter.emptyView = mLoadingView
+        adapter.setEnableLoadMore(false)
+        swipeLayout!!.isRefreshing = true
+        mHandler.postDelayed({
+            swipeLayout!!.isRefreshing = false
+            if (isNetwork()) {
+                adapter.setEnableLoadMore(true)
+                initData()
+            } else {
+                adapter.emptyView = mErrorView
+            }
+        }, 2000)
+    }
+
+    override fun onLoadMoreRequested() {
+        if (mCurPage < 100) {
+            mCurPage++
+            requestData(mKeyList[mCurIndex])
+
+        } else {
+            adapter.loadMoreComplete()
+            adapter.setEnableLoadMore(false)
+        }
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
 
 }

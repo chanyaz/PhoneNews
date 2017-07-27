@@ -1,5 +1,6 @@
 package com.ronin.cc.http
 
+import com.ronin.phonenews.http.HttpConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -10,32 +11,23 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Administrator on 2017/5/18.
  */
-class Rhttp private constructor() {
+object XHttp {
 
-    val BASE_URL = "http://baidu.com/"
     var retrofit: Retrofit
     var serviceApi: ServiceApi
     val reBuilder: Retrofit.Builder
 
-    companion object {
-        private var inst = Rhttp()
-        fun getInstance(): Rhttp {
-            return inst
-        }
-    }
-
     init {
         val clientBuilder = OkHttpClient.Builder()
-        clientBuilder.connectTimeout(10, TimeUnit.SECONDS)
+        clientBuilder.connectTimeout(HttpConfig.TIMEOUT, TimeUnit.SECONDS)
         reBuilder = Retrofit.Builder()
+                .baseUrl(HttpConfig.BASE_URL)
                 .client(clientBuilder.build())
-                .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
         retrofit = reBuilder.build()
         serviceApi = retrofit.create(ServiceApi::class.java)
     }
-
 
 
 }
