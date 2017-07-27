@@ -94,8 +94,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="20dp"
         android:src="@drawable/ic_launcher_background"
-        android:visibility="gone"
-        app:layout_behavior="com.ronin.seeking.topic.ui.view.ScrollAwareFABBehavior" />
+        android:visibility="gone"/>
 
 
 </android.support.design.widget.CoordinatorLayout>
