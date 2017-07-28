@@ -25,5 +25,7 @@ interface ServiceApi {
                     @Query("word") word: String = "",
                     @Query("rand") rand: Int = 0): Observable<NewsBean>
 
+
+
 }
 

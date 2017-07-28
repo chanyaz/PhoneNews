@@ -15,10 +15,6 @@ class NewsListAdapter
     : BaseQuickAdapter<NewsBean.NewslistBean, BaseViewHolder>(R.layout.item_news_recyclerview) {
 
     override fun convert(helper: BaseViewHolder, item: NewsBean.NewslistBean?) {
-//        helper.addOnClickListener(R.id.imgView)
-//                .addOnClickListener(R.id.tweetName)
-//                .addOnClickListener(R.id.tweetText)
-
 
         helper.getView<TextView>(R.id.tv_title)?.text = item!!.title
         helper.getView<TextView>(R.id.tv_description)?.text = item.description

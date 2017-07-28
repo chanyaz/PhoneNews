@@ -1,12 +1,9 @@
 package com.ronin.phonenews.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -33,7 +30,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.BezierPagerIndicator
 
-class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
+class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
         BaseQuickAdapter.RequestLoadMoreListener {
 
     val newsLinkMap = linkedMapOf(
@@ -75,20 +72,18 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
     lateinit var mLoadingView: View
     lateinit var mEmptyView: View
 
-    val mHandler = @SuppressLint("HandlerLeak")
-    object : Handler() {
-        override fun handleMessage(msg: Message?) {
-            super.handleMessage(msg)
-        }
-    }
+    override fun handleMessage(msg: Message) {
+        super.handleMessage(msg)
 
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news)
+        initMagicIndicator()
+        initRecyclerView()
+
         XThread.execute(Runnable {
-            initMagicIndicator()
-            initRecyclerView()
             initData()
         })
 
@@ -172,15 +167,12 @@ class NewsActivity : AppCompatActivity(), PullToRefreshView.OnRefreshListener,
         recyclerView!!.adapter = adapter
         adapter.setLoadMoreView(CustomLoadMoreView())
         adapter.setOnItemLongClickListener { _, view, position ->
-            val bean = adapter.data[position]
-            bean.url;
-            WebViewActivity.action(this,bean.title,bean.url)
+
             true
         }
         adapter.setOnItemClickListener { _, view, position ->
             val bean = adapter.data[position]
-            bean.url;
-            WebViewActivity.action(this,bean.title,bean.url)
+            WebViewActivity.action(this, bean.title!!, bean.url!!)
             true
         }
         adapter.emptyView = mLoadingView

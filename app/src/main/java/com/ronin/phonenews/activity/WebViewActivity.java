@@ -30,6 +30,8 @@ import com.ronin.phonenews.R;
 import com.ronin.phonenews.javascriptbridge.BridgeWebView;
 import com.ronin.phonenews.util.OnDoubleClickListener;
 
+import org.jetbrains.annotations.Nullable;
+
 import cn.waps.AppConnect;
 import cn.waps.AppListener;
 
@@ -68,7 +70,8 @@ public class WebViewActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
-    protected void loadViewLayout() {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
 
         Bundle bun = getIntent().getExtras();
@@ -77,15 +80,19 @@ public class WebViewActivity extends BaseActivity implements View.OnClickListene
             mWebTitle = bun.getString(WEB_TITLE);
         }
 
+        initView();
+
     }
 
-    @Override
-    protected void findView() {
+
+    protected void initView() {
+        news_layout_ad = (RelativeLayout) findViewById(R.id.news_layout_ad);
+        layout_ad_banner = (LinearLayout) findViewById(R.id.layout_ad_banner);
+
         initToolBar();
         initWebview();
         loadUrl();
         initErrorLayout();
-
     }
 
     /**
@@ -114,42 +121,38 @@ public class WebViewActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onResume() {
         super.onResume();
-        initAdShow();
+
     }
 
     /**
      * 初始化广告显示
      */
     private void initAdShow() {
-
-        //抽屉广告
-//        slidingDrawerView = SlideWall.getInstance().getView(this);
-//        if (slidingDrawerView != null) {
-//            this.addContentView(slidingDrawerView,
-//                    new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-//                            ViewGroup.LayoutParams.FILL_PARENT));
-//        }
-        news_layout_ad = (RelativeLayout) findViewById(R.id.news_layout_ad);
-        layout_ad_banner = (LinearLayout) findViewById(R.id.layout_ad_banner);
+        if (layout_ad_banner != null) {
+            layout_ad_banner.removeAllViews();
+        }
         // 10秒刷新一次
-        AppConnect.getInstance(WebViewActivity.this).
-                showMiniAd(WebViewActivity.this, layout_ad_banner, 10);
+        AppConnect.getInstance(WebViewActivity.this)
+                .showMiniAd(WebViewActivity.this, layout_ad_banner, 10);
         //加载广告
-        AppConnect.getInstance(WebViewActivity.this).showBannerAd(WebViewActivity.this,
-                layout_ad_banner, new AppListener() {
+        AppConnect.getInstance(WebViewActivity.this)
+                .showBannerAd(WebViewActivity.this,
+                        layout_ad_banner, new AppListener() {
 
-                    @Override
-                    public void onBannerClose() {
-                        super.onBannerClose();
+                            @Override
+                            public void onBannerClose() {
+                                super.onBannerClose();
 
-                    }
+                            }
 
-                    @Override
-                    public void onBannerNoData() {
-                        super.onBannerNoData();
+                            @Override
+                            public void onBannerNoData() {
+                                super.onBannerNoData();
 
-                    }
-                });
+                            }
+                        });
+
+        AppConnect.getInstance(this).initAdInfo();
 
     }
 
@@ -165,77 +168,6 @@ public class WebViewActivity extends BaseActivity implements View.OnClickListene
                 }
             });
         }
-    }
-
-    @Override
-    protected void setListener() {
-        AppConnect.getInstance(this).initAdInfo();
-
-//        webview.setDefaultHandler(new DefaultHandler());
-
-        webview.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-
-
-                return super.shouldOverrideUrlLoading(view, request);
-
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                if (!ExtKt.isNetwork(WebViewActivity.this)) {
-                    layout_error.setVisibility(View.VISIBLE);
-                } else {
-                    id_progressbar.setVisibility(View.VISIBLE);
-                    layout_error.setVisibility(View.GONE);
-                }
-
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                id_progressbar.setVisibility(View.GONE);
-            }
-
-
-            @Override
-            public void onLoadResource(WebView view, String url) {
-                super.onLoadResource(view, url);
-            }
-
-
-            @Override
-            public void onReceivedError(final WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
-
-                view.stopLoading();
-                view.clearView();
-//                layout_error.setVisibility(View.VISIBLE);
-                toolbar.setTitle(getString(R.string.app_name));
-            }
-        });
-
-        webview.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                super.onReceivedTitle(view, title);
-                toolbar.setTitle(title);
-            }
-
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-                if (newProgress > 60) {
-                    id_progressbar.setVisibility(View.GONE);
-                    layout_error.setVisibility(View.GONE);
-                }
-            }
-        });
-
     }
 
     /**
@@ -302,20 +234,86 @@ public class WebViewActivity extends BaseActivity implements View.OnClickListene
         // 设置缩放
         webview.setBackgroundColor(0);
 
+        webview.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+
+
+                return super.shouldOverrideUrlLoading(view, request);
+
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                if (!ExtKt.isNetwork(WebViewActivity.this)) {
+                    layout_error.setVisibility(View.VISIBLE);
+                } else {
+                    id_progressbar.setVisibility(View.VISIBLE);
+                    layout_error.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+            }
+
+
+            @Override
+            public void onLoadResource(WebView view, String url) {
+                super.onLoadResource(view, url);
+            }
+
+
+            @Override
+            public void onReceivedError(final WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+
+                view.stopLoading();
+                view.clearView();
+//                layout_error.setVisibility(View.VISIBLE);
+                toolbar.setTitle(getString(R.string.app_name));
+            }
+        });
+
+        webview.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                toolbar.setTitle(title);
+            }
+
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                if (newProgress > 80) {
+                    id_progressbar.setVisibility(View.GONE);
+                    layout_error.setVisibility(View.GONE);
+                    if (newProgress == 100) {
+                        //页面加载完成后，开始加载广告
+                        initAdShow();
+                    }
+                } else {
+                    if (id_progressbar.getVisibility() == View.GONE) {
+                        id_progressbar.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                webview.clearCache(true);
-                webview.clearHistory();
-                webview.destroy();
-            }
-        });
-
+        webview.clearCache(true);
+        webview.clearHistory();
+        webview.destroy();
 
     }
 

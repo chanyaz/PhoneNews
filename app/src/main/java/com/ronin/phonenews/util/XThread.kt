@@ -1,12 +1,6 @@
 package com.ronin.phonenews.util
 
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.FutureTask
-import java.util.concurrent.SynchronousQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
 /**
  * Created by ronindong on 2017/7/13.
@@ -15,7 +9,7 @@ import java.util.concurrent.TimeUnit
 class XThread private constructor() {
 
     init {
-        throw IllegalAccessError("IllegalAccessError")
+        throw IllegalAccessError("IllegalAccessError") as Throwable
     }
 
     companion object {
