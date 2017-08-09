@@ -93,7 +93,9 @@ public class WebViewActivity extends BaseActivity implements View.OnClickListene
         initWebview();
         loadUrl();
         initErrorLayout();
+
     }
+
 
     /**
      * 初始化错误布局
@@ -116,12 +118,6 @@ public class WebViewActivity extends BaseActivity implements View.OnClickListene
                 }, 1000);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
     }
 
     /**

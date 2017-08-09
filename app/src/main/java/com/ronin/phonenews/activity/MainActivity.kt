@@ -1,19 +1,29 @@
 package com.ronin.phonenews.activity
 
+import android.annotation.TargetApi
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.Message
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import cn.waps.AppConnect
 import com.ronin.cc.util.APP_ID
 import com.ronin.cc.util.getMetaValue
 import com.ronin.phonenews.R
 
 class MainActivity : BaseActivity() {
+
+    override fun handleMessage(msg: Message) {
+        super.handleMessage(msg)
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +37,11 @@ class MainActivity : BaseActivity() {
                     .setAction("Action", null).show()
             startActivity(Intent(this@MainActivity, NewsActivity::class.java))
         }
+
         initWapsAd()
+
     }
+
 
     /**
      * 初始化waps广告
@@ -66,5 +79,12 @@ class MainActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    fun startPictureEditorActivity(view: View) {
+        val intent = Intent(this, PictureEditorActivity::class.java)
+//        startActivity(intent)
+        startActivity(intent, ActivityOptionsCompat
+                .makeSceneTransitionAnimation(this).toBundle())
+    }
 
 }

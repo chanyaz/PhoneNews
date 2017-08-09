@@ -49,10 +49,7 @@ class XThread private constructor() {
         </T> */
         fun <T> submit(callable: Callable<T>): T? {
             val task = FutureTask(callable)
-            if (mService != null) {
-                mService.submit(task)
-                mService.shutdown()
-            }
+            mService?.submit(task)
             try {
                 return task.get()
             } catch (e: InterruptedException) {
@@ -62,6 +59,13 @@ class XThread private constructor() {
             }
 
             return null
+        }
+
+        /**
+         * 关闭线程池
+         */
+        fun shutdown() {
+            mService?.shutdown()
         }
     }
 
