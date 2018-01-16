@@ -40,7 +40,11 @@ android {
 
     buildTypes {
         debug {
-//            ext.alwaysUpdateBuildId = false
+            applicationIdSuffix '.debug'
+
+            aaptOptions.cruncherEnabled = false
+            ext.alwaysUpdateBuildId = false
+            buildConfigField "long", "BUILD_TIMESTAMP", "000000000L"
         }
 
         release {
@@ -91,20 +95,20 @@ android {
 
 apply plugin: 'replugin-plugin-gradle'
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testImplementation 'junit:junit:4.12'
-    implementation project(':magicindicator')
-    implementation project(':pullrefreshlibrary')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
+    testCompile 'junit:junit:4.12'
+    compile project(':magicindicator')
+    compile project(':pullrefreshlibrary')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
 
-    implementation depend["appcompat_v7"]
-    implementation depend["design"]
-    implementation depend["constraint"]
-    implementation depend["cardview_v7"]
+    compile depend["appcompat_v7"]
+    compile depend["design"]
+    compile depend["constraint"]
+    compile depend["cardview_v7"]
 
     compile depend["brvah"]
     compile depend["glide"]
@@ -116,6 +120,6 @@ dependencies {
     compile depend["adapter_rxjava"]
     compile depend["okhttp3"]
 
-    implementation depend["walle"]
+    compile depend["walle"]
 
 }

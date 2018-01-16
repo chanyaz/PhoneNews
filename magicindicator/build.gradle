@@ -20,7 +20,7 @@ android {
 
 apply plugin: 'replugin-plugin-gradle'
 dependencies {
-    implementation "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:${ext.supportVersion}"
+    compile "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "com.android.support:appcompat-v7:${ext.supportVersion}"
 }

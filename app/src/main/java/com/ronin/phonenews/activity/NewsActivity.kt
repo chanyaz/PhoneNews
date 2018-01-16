@@ -255,7 +255,7 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
     }
 
 
-    override fun onDestroy() {
+     override fun onDestroy() {
         super.onDestroy()
     }
 

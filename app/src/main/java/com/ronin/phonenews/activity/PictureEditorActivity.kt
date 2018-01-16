@@ -47,7 +47,7 @@ class PictureEditorActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
                 imageView!!.setImageBitmap(bm)
 
             } else {
-                imageView!!.setImageResource(R.drawable.a)
+                imageView!!.setImageResource(R.drawable.animation_img1)
             }
         }
         hueSeekBar?.setOnSeekBarChangeListener(this)
@@ -60,7 +60,7 @@ class PictureEditorActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
      * 对相片进行浮雕处理
      */
     private fun reliefImage(): Bitmap {
-        val bm = BitmapFactory.decodeResource(resources, R.drawable.a)
+        val bm = BitmapFactory.decodeResource(resources, R.drawable.animation_img1)
         val width = bm.width
         val height = bm.height
         val size = width * height
@@ -136,7 +136,7 @@ class PictureEditorActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
      * 图片的色调、饱和度和亮度进行处理
      */
     private fun handlerBitmap(hue: Float, sat: Float, lum: Float): Bitmap {
-        val bm = BitmapFactory.decodeResource(resources, R.drawable.a)
+        val bm = BitmapFactory.decodeResource(resources, R.drawable.animation_img1)
         val bmp = Bitmap.createBitmap(bm.width, bm.height, Bitmap.Config.ARGB_8888)
         var canvas = Canvas(bmp)
         var paint = Paint()

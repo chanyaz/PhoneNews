@@ -7,6 +7,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.ronin.phonenews.R
 import com.ronin.phonenews.bean.NewsBean
+import com.ronin.phonenews.util.RxJavaTest
 
 /**
  * Created by Administrator on 2017/3/10.
@@ -24,6 +25,8 @@ class NewsListAdapter
                 .error(R.drawable.ic_launcher_background)
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(imageView)
+
+        RxJavaTest.start()
 
     }
 
