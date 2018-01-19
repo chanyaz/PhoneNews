@@ -2,13 +2,18 @@ package com.ronin.phonenews.util;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.AsyncSubject;
 import io.reactivex.subjects.BehaviorSubject;
@@ -25,7 +30,61 @@ public class RxJavaTest {
 
     public static void start() {
 //        testSubject();
-        testObservable();
+//        testObservable();
+        testMap();
+
+    }
+
+    private static void testFlatMap() {
+        //concatMap 顺序执行
+        //flatMap 不定序列
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> observableEmitter) throws Exception {
+                observableEmitter.onNext(0);
+                observableEmitter.onNext(1);
+                observableEmitter.onNext(2);
+
+            }
+        }).flatMap(new Function<Integer, ObservableSource<String>>() {
+            @Override
+            public ObservableSource<String> apply(Integer integer) throws Exception {
+                final ArrayList<String> list = new ArrayList<>();
+                for (int i = 0; i < 3; i++) {
+                    list.add("flatmap:" + integer);
+                }
+                return Observable.fromIterable(list).delay(10, TimeUnit.MICROSECONDS);
+            }
+        }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.i(TAG, "flatMap accept: s=" + s);
+            }
+        });
+    }
+
+    private static void testMap() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> observableEmitter) throws Exception {
+                observableEmitter.onNext(0);
+                observableEmitter.onNext(1);
+                observableEmitter.onNext(2);
+
+            }
+        }).map(new Function<Integer, String>() {
+            @Override
+            public String apply(Integer integer) throws Exception {
+                return "map transform:" + integer;
+            }
+        }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.i(TAG, "accept: s=" + s);
+            }
+        });
+
+        testFlatMap();
     }
 
     private static void testObservable() {
