@@ -30,7 +30,6 @@ ext {
     butterknifeVersion = "7.0.1"
     retrofitVersion = "2.3.0"
     gsonVersion = "2.8.0"
-    glideVersion = "3.7.0"
     photoviewVersion = "1.4.1"
     appintroVersion = "4.1.0"
     okhttputilsVersion = "2.6.2"
@@ -98,7 +97,7 @@ ext {
             /*
              * 图片加载
              */
-            glide                   : "com.github.bumptech.glide:glide:${glideVersion}",
+            glide                   : "com.github.bumptech.glide:glide:3.7.0",
 
             /*
              * view
@@ -120,6 +119,7 @@ ext {
             rxpermissions           : "com.tbruyelle.rxpermissions:rxpermissions:0.9.4@aar",
             WaveSwipeRefreshLayout  : "com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6",
             phoenix                 : "com.yalantis:phoenix:1.2.3",
+            DanmakuFlameMaster      : "com.github.ctiao:DanmakuFlameMaster:0.9.16",
             //图片选择
             PictureSelector         : "com.github.LuckSiege.PictureSelector:picture_library:v1.5.0",
             circleimageview         : "de.hdodenhof:circleimageview:2.1.0",

@@ -12,16 +12,19 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.ronin.cc.adapter.NewsListAdapter
 import com.ronin.cc.http.XHttp
 import com.ronin.cc.loadmore.CustomLoadMoreView
+import com.ronin.cc.util.getScreenHeight
 import com.ronin.cc.util.isNetwork
 import com.ronin.cc.util.toast
 import com.ronin.phonenews.R
 import com.ronin.phonenews.bean.NewsBean
 import com.ronin.phonenews.titles.ScaleTransitionPagerTitleView
+import com.ronin.phonenews.util.DanmakuHelper
 import com.ronin.phonenews.util.XThread
 import com.ronin.pullrefreshlibrary.PullToRefreshView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DefaultObserver
 import io.reactivex.schedulers.Schedulers
+import master.flame.danmaku.ui.widget.DanmakuView
 import net.lucode.hackware.magicindicator.FragmentContainerHelper
 import net.lucode.hackware.magicindicator.MagicIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -63,8 +66,10 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
     var indicator: MagicIndicator? = null
     val nagvHelper = FragmentContainerHelper()
 
-    internal var swipeLayout: PullToRefreshView? = null
+    private var swipeLayout: PullToRefreshView? = null
     internal var recyclerView: RecyclerView? = null
+    private var danmaku_view: DanmakuView? = null
+    private var danmakuHelper: DanmakuHelper? = null
 
     val adapter = NewsListAdapter()
 
@@ -82,11 +87,21 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
         setContentView(R.layout.activity_news)
         initMagicIndicator()
         initRecyclerView()
+        initDanmaku()
 
         XThread.execute(Runnable {
             initData()
         })
 
+    }
+
+    private fun initDanmaku() {
+        danmaku_view = findViewById(R.id.danmaku_view) as DanmakuView
+        val layoutParams = danmaku_view!!.layoutParams
+        layoutParams.height = getScreenHeight() / 3
+        danmaku_view!!.layoutParams = layoutParams
+
+        danmakuHelper = DanmakuHelper(danmaku_view!!)
     }
 
     private fun initData() {
@@ -254,9 +269,19 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        danmakuHelper!!.pause()
+    }
 
-     override fun onDestroy() {
+    override fun onResume() {
+        super.onResume()
+        danmakuHelper!!.resume()
+    }
+
+    override fun onDestroy() {
         super.onDestroy()
+        danmakuHelper!!.destroy()
     }
 
 

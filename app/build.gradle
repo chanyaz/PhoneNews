@@ -110,6 +110,7 @@ dependencies {
     compile depend["constraint"]
     compile depend["cardview_v7"]
 
+    compile depend["DanmakuFlameMaster"]
     compile depend["brvah"]
     compile depend["glide"]
     compile depend["gson"]

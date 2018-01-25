@@ -3,6 +3,7 @@ package com.ronin.cc.util
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.os.Build
 import android.support.annotation.StringRes
@@ -14,7 +15,6 @@ import java.util.regex.Pattern
 /**
  * Created by ronindong on 2017/4/1.
  */
-
 
 
 inline fun <T> supportApi(sdkInt: Int, code: () -> T) {
@@ -29,12 +29,12 @@ fun String.iStartAlphabet(): Boolean {
 }
 
 
- fun isDigits(input: CharSequence): Boolean {
+fun isDigits(input: CharSequence): Boolean {
     val length = input.length
     return (0..length - 1).any { Character.isDigit(input[it]) }
 }
 
- fun isEmail(input: String): Boolean {
+fun isEmail(input: String): Boolean {
     val regex = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
     return regexMatch(input, regex)
 }
@@ -86,13 +86,29 @@ fun Context.isMobile(): Boolean {
     return false
 }
 
-fun Context.toast(text:CharSequence){
-    Toast.makeText(this,text,Toast.LENGTH_SHORT).show()
-}
-fun Context.toast(@StringRes resId: Int){
-    Toast.makeText(this,resId,Toast.LENGTH_SHORT).show()
+fun Context.toast(text: CharSequence) {
+    Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 }
 
+fun Context.toast(@StringRes resId: Int) {
+    Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
+}
+
+fun Context.getScreenHeight(): Int {
+    return Resources.getSystem().displayMetrics.heightPixels
+}
+
+fun Context.getScreenWidth(): Int {
+    return Resources.getSystem().displayMetrics.widthPixels
+}
+
+inline fun dp2px(dip: Int): Float {
+    return Resources.getSystem().displayMetrics.density * dip + 0.5f
+}
+
+inline fun px2dp(px: Int): Int {
+    return ((px - 0.5f) / Resources.getSystem().displayMetrics.density) as Int
+}
 
 fun getMetaValue(cx: Context, metaName: String): String {
 
