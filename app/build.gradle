@@ -102,7 +102,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':magicindicator')
     compile project(':pullrefreshlibrary')
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compile "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
 
     compile depend["appcompat_v7"]
@@ -122,5 +122,9 @@ dependencies {
     compile depend["okhttp3"]
 
     compile depend["walle"]
+    compile depend["qmui"]
 
 }
+
+apply plugin: 'com.hc.gradle'
+//apply plugin: 'com.ronin.gradle'

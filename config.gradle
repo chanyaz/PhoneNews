@@ -2,8 +2,8 @@ ext {
 
 
     android = [
-            compileSdkVersion: 25,
-            buildToolsVersion: "25.0.2",
+            compileSdkVersion: 26,
+            buildToolsVersion: "26.0.2",
             minSdkVersion    : 16,
             targetSdkVersion : 25,
             versionCode      : 1,
@@ -120,6 +120,7 @@ ext {
             WaveSwipeRefreshLayout  : "com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6",
             phoenix                 : "com.yalantis:phoenix:1.2.3",
             DanmakuFlameMaster      : "com.github.ctiao:DanmakuFlameMaster:0.9.16",
+            qmui                    : "com.qmuiteam:qmui:1.0.6",
             //图片选择
             PictureSelector         : "com.github.LuckSiege.PictureSelector:picture_library:v1.5.0",
             circleimageview         : "de.hdodenhof:circleimageview:2.1.0",
