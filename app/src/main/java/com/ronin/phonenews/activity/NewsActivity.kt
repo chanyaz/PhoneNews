@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -15,13 +16,18 @@ import com.ronin.cc.loadmore.CustomLoadMoreView
 import com.ronin.cc.util.getScreenHeight
 import com.ronin.cc.util.isNetwork
 import com.ronin.cc.util.toast
+import com.ronin.net.api.ApiMethods
+import com.ronin.net.base.SimpleObserver
 import com.ronin.phonenews.R
 import com.ronin.phonenews.bean.NewsBean
 import com.ronin.phonenews.titles.ScaleTransitionPagerTitleView
 import com.ronin.phonenews.util.DanmakuHelper
+import com.ronin.phonenews.util.GsonUtil
 import com.ronin.phonenews.util.XThread
 import com.ronin.pullrefreshlibrary.PullToRefreshView
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DefaultObserver
 import io.reactivex.schedulers.Schedulers
 import master.flame.danmaku.ui.widget.DanmakuView
@@ -32,9 +38,11 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNav
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.BezierPagerIndicator
+import test.bean.Movie
 
 class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
         BaseQuickAdapter.RequestLoadMoreListener {
+    val TAG = NewsActivity::javaClass.name
 
     val newsLinkMap = linkedMapOf(
             Pair("social", "社会新闻"),
@@ -107,6 +115,11 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
     private fun initData() {
 
         requestData(mKeyList[mCurIndex], isInit = true)
+        ApiMethods.getTopMovie(object : SimpleObserver<Movie>() {
+            override fun onNext(t: Movie) {
+                Log.i(TAG, "onNext=${GsonUtil.toJson(t)}")
+            }
+        }, 0, 10)
 
     }
 
@@ -123,15 +136,10 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : DefaultObserver<NewsBean>() {
-                    override fun onComplete() {
-                        adapter.loadMoreComplete()
+                    override fun onError(e: Throwable) {
                     }
 
-                    override fun onError(e: Throwable?) {
-
-                    }
-
-                    override fun onNext(t: NewsBean?) {
+                    override fun onNext(t: NewsBean) {
                         if (t!!.code == 200 && t.newslist!!.isNotEmpty()) {
                             if (isInit) {
                                 adapter.data.clear()
@@ -146,6 +154,11 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
                             adapter.setEnableLoadMore(false)
                         }
                     }
+
+                    override fun onComplete() {
+                        adapter.loadMoreComplete()
+                    }
+
 
                 })
     }

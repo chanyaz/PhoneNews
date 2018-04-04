@@ -1,1 +1,1 @@
-include ':app', ':magicindicator', ':pullrefreshlibrary', ":plugin"
+include ':app', ':magicindicator', ':pullrefreshlibrary', ':netlib', ":plugin"

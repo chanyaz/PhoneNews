@@ -102,6 +102,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':magicindicator')
     compile project(':pullrefreshlibrary')
+    compile project(':netlib')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compile "com.qihoo360.replugin:replugin-plugin-lib:${ext.repluginVersion}"
 
