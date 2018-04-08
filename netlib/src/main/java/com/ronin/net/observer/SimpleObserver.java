@@ -1,18 +1,16 @@
-package com.ronin.net.base;
+package com.ronin.net.observer;
 
-import android.util.Log;
-
-import com.ronin.net.listener.OnNextListener;
+import com.ronin.net.base.BaseObserver;
 
 import io.reactivex.disposables.Disposable;
 
 /**
- * Created by donghailong on 2018/4/4.
+ * @author donghailong
+ * @date 2018/4/4
  */
 
 public abstract class SimpleObserver<T> extends BaseObserver<T> {
     private static final String TAG = "SimpleObserver";
-
 
     public SimpleObserver() {
     }
@@ -20,23 +18,21 @@ public abstract class SimpleObserver<T> extends BaseObserver<T> {
     @Override
     public void onSubscribe(Disposable d) {
         super.onSubscribe(d);
-        Log.d(TAG, TAG + "-->onSubscribe:" + d);
-
     }
 
+    /**
+     * @param t
+     */
     @Override
-    public void onNext(T t) {
-        Log.d(TAG, TAG + "-->onNext:" + t);
-
-    }
+    public abstract void onNext(T t);
 
     @Override
     public void onError(Throwable e) {
-        Log.d(TAG, TAG + "-->onError:" + e);
+        super.onError(e);
     }
 
     @Override
     public void onComplete() {
-        Log.d(TAG, TAG + "-->onComplete");
+        super.onComplete();
     }
 }

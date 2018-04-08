@@ -1,6 +1,5 @@
 package com.ronin.cc.http
 
-import com.ronin.net.api.NetService
 import com.ronin.phonenews.bean.NewsBean
 import com.ronin.phonenews.http.HttpConfig
 import io.reactivex.Observable

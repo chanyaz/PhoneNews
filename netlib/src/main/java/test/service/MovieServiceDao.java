@@ -1,4 +1,4 @@
-package com.ronin.net.dao;
+package test.service;
 
 
 
@@ -12,7 +12,7 @@ import test.bean.Movie;
  * @date 2018/4/4
  */
 
-public interface MovieService {
+public interface MovieServiceDao {
 
     @GET("top250")
     Observable<Movie> getTopMovie(@Query("start") int start, @Query("count") int count);
