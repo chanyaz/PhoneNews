@@ -25,7 +25,7 @@ class App : Application() {
         ThreadPoolUtils.init()
 
 //        NeverHandler.init(object : NeverHandler.CrashHandler {
-//            override fun uncaughtException(t: Thread, e: Throwable) {
+//            override fun uncaughtException(service: Thread, e: Throwable) {
 //                toast(e.toString())
 //            }
 //        })

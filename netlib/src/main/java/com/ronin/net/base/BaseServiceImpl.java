@@ -14,11 +14,11 @@ import io.reactivex.schedulers.Schedulers;
  * @author donghailong
  */
 public abstract class BaseServiceImpl<T> {
-    private static Map<String, BaseServiceImpl> registryMap = new HashMap<>();
-    protected T t;
+    private static final Map<String, BaseServiceImpl> registryMap = new HashMap<>();
+    protected T service;
 
     protected BaseServiceImpl() {
-        t = Net.getService(this.<T>getServiceClass());
+        service = Net.getService(this.getServiceClass());
         try {
             String clazzName = this.getClass().getName();
             if (registryMap.containsKey(clazzName)) {
@@ -44,19 +44,20 @@ public abstract class BaseServiceImpl<T> {
     /**
      * 封装线程管理和订阅的过程
      */
-    public static void ready(Observable<?> observable, Observer observer) {
+    protected <R> Observable<R> ready(Observable<R> observable, Observer<R> observer) {
         observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
+        return observable;
     }
 
 
     /**
-     * @param <T>
+     * 接口服务类
      * @return
      */
-    protected abstract <T> Class<T> getServiceClass();
+    protected abstract Class<T> getServiceClass();
 
 
     @SuppressWarnings("unchecked")
@@ -80,8 +81,7 @@ public abstract class BaseServiceImpl<T> {
         return (S) registryMap.get(clazzName);
     }
 
-
-    static class SingletonException extends Exception {
+    private static class SingletonException extends Exception {
         /**
          *
          */

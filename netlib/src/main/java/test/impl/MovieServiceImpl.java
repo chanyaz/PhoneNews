@@ -2,8 +2,10 @@ package test.impl;
 
 import com.ronin.net.base.BaseServiceImpl;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import test.bean.Movie;
+import test.bean.MovieDetail;
 import test.service.MovieServiceDao;
 
 /**
@@ -30,10 +32,13 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieServiceDao> {
      * @param count    获取长度
      */
     public void getTopMovie(int start, int count, Observer<Movie> observer) {
-        ready(t.getTopMovie(start, count), observer);
+        ready(service.getTopMovie(start, count), observer);
     }
 
+    public void getTopMovie(Observer<MovieDetail> observer) {
+        ready(service.getMovieDetail(), observer);
 
+    }
 
 
 }
