@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -16,9 +18,16 @@ import io.reactivex.schedulers.Schedulers;
 public abstract class BaseServiceImpl<T> {
     private static final Map<String, BaseServiceImpl> registryMap = new HashMap<>();
     protected T service;
+    private Net net;
 
     protected BaseServiceImpl() {
-        service = Net.getService(this.getServiceClass());
+        if (null != net) {
+            net = new Net.Builder()
+                    .setBaseUrl(getBaseUrl())
+                    .setHeaders(getHeaders())
+                    .build();
+        }
+        service = net.getService(this.serviceClass());
         try {
             String clazzName = this.getClass().getName();
             if (registryMap.containsKey(clazzName)) {
@@ -41,23 +50,24 @@ public abstract class BaseServiceImpl<T> {
     }
 
 
-    /**
-     * 封装线程管理和订阅的过程
-     */
-    protected <R> Observable<R> ready(Observable<R> observable, Observer<R> observer) {
-        observable.subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-        return observable;
-    }
-
 
     /**
      * 接口服务类
+     *
      * @return
      */
-    protected abstract Class<T> getServiceClass();
+    protected abstract Class<T> serviceClass();
+
+    @NonNull
+    protected abstract String getBaseUrl();
+
+    protected Map<String, String> getHeaders() {
+        return null;
+    }
+
+    public T getService() {
+        return service;
+    }
 
 
     @SuppressWarnings("unchecked")

@@ -2,9 +2,13 @@ package com.ronin.net.base;
 
 import android.util.Log;
 
+import com.ronin.net.manager.DisposableManager;
+
 import java.io.IOException;
 
+import io.reactivex.ObservableTransformer;
 import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import retrofit2.HttpException;
 
@@ -19,11 +23,15 @@ public abstract class BaseObserver<T> implements Observer<T> {
 
     protected Disposable disposable;
     protected String errMessage;
+    private DisposableManager mDisposableManager = DisposableManager.getInstance();
 
     @Override
     public void onSubscribe(Disposable d) {
         Log.d(TAG, TAG + "-->onSubscribe:" + d);
         disposable = d;
+        if (null != mDisposableManager) {
+            mDisposableManager.add(disposable);
+        }
     }
 
     @Override
@@ -51,6 +59,9 @@ public abstract class BaseObserver<T> implements Observer<T> {
     public final void dispose() {
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
+        }
+        if (null != mDisposableManager) {
+            mDisposableManager.delete(disposable);
         }
     }
 

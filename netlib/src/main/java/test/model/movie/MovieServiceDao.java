@@ -1,11 +1,11 @@
-package test.service;
+package test.model.movie;
 
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import test.bean.Movie;
-import test.bean.MovieDetail;
+import test.model.movie.bean.Movie;
+import test.model.movie.bean.MovieDetail;
 
 /**
  * @author donghailong

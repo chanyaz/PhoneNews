@@ -1,5 +1,7 @@
 package com.ronin.net;
 
+import android.text.TextUtils;
+
 import com.ronin.net.helper.InterceptorHelper;
 
 import java.util.HashMap;
@@ -17,53 +19,30 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class Net {
-    public static String baseUrl = "https://api.douban.com/v2/movie/";
-    public static final int TIMEOUT = 30000;
+    private static final int TIMEOUT = 10000;
+    private String baseUrl;
+    private Map<String, String> headers = new HashMap<>();
 
-    private static Net net;
-    private static volatile Retrofit retrofit;
-    private static OkHttpClient httpClient;
-    /**
-     *
-     */
-    private static Map<String, String> headers = new HashMap<>();
-
-    public static void init() {
-
-    }
-
-    //单例
-    private static Net getInstance() {
-        if (net == null) {
-            synchronized (Net.class) {
-                if (net == null) {
-                    net = new Net();
-                }
-            }
-        }
-        return net;
-    }
+    private volatile Retrofit retrofit;
+    private OkHttpClient httpClient;
 
     private Net() {
-        initRetrofit();
     }
 
     /**
      *
      */
-    private static void initRetrofit() {
-        if (null == httpClient) {
-            httpClient = new OkHttpClient.Builder()
-                    .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-                    .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-                    .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-                    .retryOnConnectionFailure(true)
-                    .addInterceptor(InterceptorHelper.headInterceptor(headers))
-                    //添加日志拦截器
-                    .addInterceptor(InterceptorHelper.logInterceptor())
-                    .build();
+    private void initRetrofit() {
+        httpClient = new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .addInterceptor(InterceptorHelper.headInterceptor(headers))
+                //添加日志拦截器
+                .addInterceptor(InterceptorHelper.logInterceptor())
+                .build();
 
-        }
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -80,21 +59,42 @@ public class Net {
      * @param <T>
      * @return
      */
-    public static <T> T getService(Class<T> service) {
-        if (retrofit == null) {
-            initRetrofit();
-        }
+    public <T> T getService(Class<T> service) {
+        initRetrofit();
         return retrofit.create(service);
     }
 
-    /**
-     * @param header
-     */
-    public static void setHeaders(Map<String, String> header) {
-        if (null == net) {
-            getInstance();
+    public static class Builder {
+        private String baseUrl;
+        private Map<String, String> headers;
+
+        public Builder() {
         }
-        headers = header;
+
+        public Builder(Net net) {
+            this.baseUrl = net.baseUrl;
+            this.headers = net.headers;
+        }
+
+        public Builder setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        /**
+         * @param header
+         */
+        public Builder setHeaders(Map<String, String> header) {
+            this.headers = header;
+            return this;
+        }
+
+        public Net build() {
+            final Net net = new Net();
+            net.baseUrl = this.baseUrl;
+            net.headers = this.headers;
+            return net;
+        }
     }
 
 }
