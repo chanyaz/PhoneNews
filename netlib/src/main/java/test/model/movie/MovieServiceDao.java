@@ -18,7 +18,7 @@ public interface MovieServiceDao {
     Observable<Movie> getTopMovie(@Query("start") int start, @Query("count") int count);
 
     @GET("top250")
-    Observable<MovieDetail> getMovieDetail();
+    Observable<MovieDetail> getMovieDetail(String title);
 
 }
 

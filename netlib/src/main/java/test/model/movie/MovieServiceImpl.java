@@ -40,7 +40,7 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieServiceDao> implement
     }
 
     @Override
-    public Observable<MovieDetail> getMovieDetail() {
-        return SchedulerHelper.schedulerThread(service.getMovieDetail());
+    public Observable<MovieDetail> getMovieDetail(String title) {
+        return SchedulerHelper.schedulerThread(service.getMovieDetail(title));
     }
 }
