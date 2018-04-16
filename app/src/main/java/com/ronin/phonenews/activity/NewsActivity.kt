@@ -35,8 +35,8 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNav
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.BezierPagerIndicator
-import test.bean.Movie
-import test.impl.MovieServiceImpl
+import test.model.movie.MovieServiceImpl
+import test.model.movie.bean.Movie
 
 class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
         BaseQuickAdapter.RequestLoadMoreListener {
@@ -86,11 +86,12 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
     override fun handleMessage(msg: Message) {
         super.handleMessage(msg)
 
-        MovieServiceImpl.getInstance().getTopMovie(0, 10, object : ProgressObserver<Movie>(this) {
-            override fun onNext(t: Movie) {
-                Log.i(TAG, "onNext=${GsonUtil.toJson(t)}")
-            }
-        })
+        MovieServiceImpl.getInstance().getTopMovie(0, 10)
+                .subscribe(object : ProgressObserver<Movie>(this) {
+                    override fun onNext(t: Movie) {
+                        Log.i(TAG, "onNext=${GsonUtil.toJson(t)}")
+                    }
+                })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

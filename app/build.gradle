@@ -124,6 +124,9 @@ dependencies {
 
     compile depend["walle"]
     compile depend["qmui"]
+    compile depend["matisse"]
+    compile depend["qiniu"]
+    compile depend["rxpermissions"]
 
 }
 

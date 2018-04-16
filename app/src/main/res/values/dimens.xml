@@ -11,4 +11,8 @@
     <dimen name="text_22">22sp</dimen>
     <!--action bar height-->
     <dimen name="action_bar_height">55dip</dimen>
+
+    <dimen name="grid_expected_size">120dp</dimen>
+    <dimen name="item_margin_horizontal">24dp</dimen>
+    <dimen name="item_margin_vertical">8dp</dimen>
 </resources>
