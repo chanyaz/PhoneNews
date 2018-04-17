@@ -124,6 +124,7 @@ ext {
             circleimageview         : "de.hdodenhof:circleimageview:2.1.0",
             matisse                 : 'com.zhihu.android:matisse:0.4.3',
             qiniu                   : 'com.qiniu:qiniu-android-sdk:7.3.+',
+            customactivityoncrash   : 'cat.ereza:customactivityoncrash:2.2.0',
 
             /*
              *  第三方sdk

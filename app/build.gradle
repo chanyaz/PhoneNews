@@ -127,6 +127,7 @@ dependencies {
     compile depend["matisse"]
     compile depend["qiniu"]
     compile depend["rxpermissions"]
+    compile depend["customactivityoncrash"]
 
 }
 

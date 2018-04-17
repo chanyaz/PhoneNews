@@ -64,6 +64,12 @@
 
         <activity android:name=".activity.PictureEditorActivity"/>
 
+
+        <activity
+            android:name="cat.ereza.customactivityoncrash.activity.DefaultErrorActivity"
+            android:theme="@style/AppTheme"
+            android:process=":error_activity" />
+
     </application>
 
 </manifest>
