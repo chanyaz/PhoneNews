@@ -9,7 +9,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by donghailong on 2018/4/12.
+ *
+ * @author donghailong
+ * @date 2018/4/12
  */
 
 public class SchedulerHelper {

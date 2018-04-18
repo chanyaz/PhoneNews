@@ -41,4 +41,11 @@ public final class SingletonManager {
         return (T) sInstanceMap.get(clazzName);
     }
 
+    /**
+     *
+     */
+    public static void clear() {
+        sInstanceMap.clear();
+    }
+
 }
