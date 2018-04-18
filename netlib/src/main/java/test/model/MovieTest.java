@@ -15,7 +15,7 @@ import test.model.movie.bean.MovieDetail;
  * @date 2018/4/13
  */
 
-public class NetCallTest {
+public class MovieTest {
 
     /**
      * 1. 顺序执行网络请求

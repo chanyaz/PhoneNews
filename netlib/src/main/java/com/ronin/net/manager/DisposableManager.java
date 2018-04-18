@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable;
 
 public class DisposableManager {
 
-    private volatile CompositeDisposable mDisposable = new CompositeDisposable();
+    private static volatile CompositeDisposable sDisposable = new CompositeDisposable();
 
     public static DisposableManager getInstance() {
         return Holder.INSTANCE;
@@ -23,21 +23,21 @@ public class DisposableManager {
      * @param d
      */
     public void add(Disposable d) {
-        if (null != mDisposable) {
-            mDisposable.add(d);
+        if (null != sDisposable) {
+            sDisposable.add(d);
         }
     }
 
     public boolean delete(Disposable d) {
-        return mDisposable.delete(d);
+        return sDisposable.delete(d);
     }
 
     /**
      *
      */
     public void clear() {
-        if (null != mDisposable) {
-            mDisposable.clear();
+        if (null != sDisposable) {
+            sDisposable.clear();
         }
     }
 

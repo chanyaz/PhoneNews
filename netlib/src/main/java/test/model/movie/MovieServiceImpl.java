@@ -3,6 +3,7 @@ package test.model.movie;
 import com.ronin.net.base.BaseObserver;
 import com.ronin.net.base.BaseServiceImpl;
 import com.ronin.net.helper.SchedulerHelper;
+import com.ronin.net.manager.SingletonManager;
 
 import io.reactivex.Observable;
 import test.model.movie.bean.Movie;
@@ -20,7 +21,7 @@ import static com.ronin.net.helper.SchedulerHelper.schedulerThread;
 public class MovieServiceImpl extends BaseServiceImpl<MovieServiceDao> implements MovieServiceDao {
 
     public static MovieServiceImpl getInstance() {
-        return BaseServiceImpl.get(MovieServiceImpl.class);
+        return SingletonManager.get(MovieServiceImpl.class);
     }
 
     @Override
