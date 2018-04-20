@@ -29,6 +29,10 @@ public class Net {
     private Net() {
     }
 
+    public static Net getInstance(){
+        return Holder.INSTANCE;
+    }
+
     /**
      *
      */
@@ -64,37 +68,9 @@ public class Net {
         return retrofit.create(service);
     }
 
-    public static class Builder {
-        private String baseUrl;
-        private Map<String, String> headers;
-
-        public Builder() {
-        }
-
-        public Builder(Net net) {
-            this.baseUrl = net.baseUrl;
-            this.headers = net.headers;
-        }
-
-        public Builder setBaseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-            return this;
-        }
-
-        /**
-         * @param header
-         */
-        public Builder setHeaders(Map<String, String> header) {
-            this.headers = header;
-            return this;
-        }
-
-        public Net build() {
-            final Net net = new Net();
-            net.baseUrl = this.baseUrl;
-            net.headers = this.headers;
-            return net;
-        }
+    private static class Holder{
+        public static final Net INSTANCE = new Net();
     }
+
 
 }

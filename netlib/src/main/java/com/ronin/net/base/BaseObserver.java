@@ -23,15 +23,12 @@ public abstract class BaseObserver<T> implements Observer<T> {
 
     protected Disposable disposable;
     protected String errMessage;
-    private DisposableManager mDisposableManager = DisposableManager.getInstance();
 
     @Override
     public void onSubscribe(Disposable d) {
         Log.d(TAG, TAG + "-->onSubscribe:" + d);
         disposable = d;
-        if (null != mDisposableManager) {
-            mDisposableManager.add(disposable);
-        }
+        DisposableManager.getInstance().add(disposable);
     }
 
     @Override
@@ -60,9 +57,7 @@ public abstract class BaseObserver<T> implements Observer<T> {
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
-        if (null != mDisposableManager) {
-            mDisposableManager.delete(disposable);
-        }
+        DisposableManager.getInstance().delete(disposable);
     }
 
 

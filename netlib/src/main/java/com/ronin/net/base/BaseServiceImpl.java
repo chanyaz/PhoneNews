@@ -11,16 +11,9 @@ import io.reactivex.annotations.NonNull;
  */
 public abstract class BaseServiceImpl<T> {
     protected T service;
-    private Net net;
 
     protected BaseServiceImpl() {
-        if (null == net) {
-            net = new Net.Builder()
-                    .setBaseUrl(getBaseUrl())
-                    .setHeaders(getHeaders())
-                    .build();
-        }
-        service = net.getService(this.serviceClass());
+        service = Net.getInstance().getService(this.serviceClass());
     }
 
     /**

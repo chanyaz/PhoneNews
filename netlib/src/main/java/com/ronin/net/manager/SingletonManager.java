@@ -12,8 +12,8 @@ import java.util.Map;
 public final class SingletonManager {
     private static final Map<String, Object> sInstanceMap = new HashMap<>();
 
-    private SingletonManager() throws IllegalAccessException {
-        throw new IllegalAccessException("SingletonManager not allow create instance!");
+    private SingletonManager() throws InstantiationException {
+        throw new InstantiationException("SingletonManager not allow create instance!");
     }
 
     @SuppressWarnings("unchecked")
