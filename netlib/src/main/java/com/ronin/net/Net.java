@@ -1,8 +1,10 @@
 package com.ronin.net;
 
 import android.text.TextUtils;
+import android.util.Patterns;
 
 import com.ronin.net.helper.InterceptorHelper;
+import com.ronin.net.config.ConfigInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,23 +15,28 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.ronin.net.config.ConfigInfo.TIMEOUT;
+
 /**
  * @author donghailong
  * @date 2018/4/4
  */
 
 public class Net {
-    private static final int TIMEOUT = 10000;
-    private String baseUrl;
+
+    private String baseUrl = ConfigInfo.API_URL;
     private Map<String, String> headers = new HashMap<>();
 
     private volatile Retrofit retrofit;
-    private OkHttpClient httpClient;
 
     private Net() {
     }
 
-    public static Net getInstance(){
+    private static class Holder {
+        private static final Net INSTANCE = new Net();
+    }
+
+    public static Net getInstance() {
         return Holder.INSTANCE;
     }
 
@@ -37,7 +44,7 @@ public class Net {
      *
      */
     private void initRetrofit() {
-        httpClient = new OkHttpClient.Builder()
+        OkHttpClient httpClient = new OkHttpClient.Builder()
                 .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -68,8 +75,12 @@ public class Net {
         return retrofit.create(service);
     }
 
-    private static class Holder{
-        public static final Net INSTANCE = new Net();
+
+    public void setBaseUrl(String baseUrl) {
+        if (!TextUtils.isEmpty(baseUrl)
+                && Patterns.WEB_URL.matcher(baseUrl).find()) {
+            this.baseUrl = baseUrl;
+        }
     }
 
 

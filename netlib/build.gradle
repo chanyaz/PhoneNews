@@ -1,15 +1,14 @@
 apply plugin: 'com.android.library'
 
-def ext = rootProject.ext.android
 android {
-    compileSdkVersion ext.compileSdkVersion
-    buildToolsVersion ext.buildToolsVersion
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
-        minSdkVersion ext.minSdkVersion
-        targetSdkVersion ext.targetSdkVersion
-        versionCode ext.versionCode
-        versionName ext.versionName
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -22,7 +21,7 @@ android {
     }
 }
 def retrofitVersion = '2.3.0'
-def okhttpVersion = '3.10.0'
+def okHttpVersion = '3.10.0'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -32,8 +31,8 @@ dependencies {
     compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     compile "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
-    compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-    compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+    compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+    compile "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 }
 
 sourceCompatibility = "1.7"

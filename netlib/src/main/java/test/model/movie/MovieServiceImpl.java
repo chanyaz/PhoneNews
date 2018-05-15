@@ -30,11 +30,6 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieServiceDao> implement
     }
 
     @Override
-    protected String getBaseUrl() {
-        return "https://api.douban.com/v2/movie/";
-    }
-
-    @Override
     public Observable<Movie> getTopMovie(int start, int count) {
         return service.getTopMovie(start, count)
                 .compose(SchedulerHelper.<Movie>applySchedulers());

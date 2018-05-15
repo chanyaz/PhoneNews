@@ -13,6 +13,7 @@ public abstract class BaseServiceImpl<T> {
     protected T service;
 
     protected BaseServiceImpl() {
+        Net.getInstance().setBaseUrl(getBaseUrl());
         service = Net.getInstance().getService(this.serviceClass());
     }
 
@@ -26,8 +27,9 @@ public abstract class BaseServiceImpl<T> {
     /**
      * @return
      */
-    @NonNull
-    protected abstract String getBaseUrl();
+    protected String getBaseUrl() {
+        return null;
+    }
 
     protected Map<String, String> getHeaders() {
         return null;
