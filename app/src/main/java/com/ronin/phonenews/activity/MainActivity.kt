@@ -19,6 +19,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.work.WorkManager
 import cn.waps.AppConnect
 import com.ronin.cc.util.APP_ID
 import com.ronin.cc.util.getMetaValue
@@ -61,7 +62,6 @@ class MainActivity : BaseActivity() {
         }
 
         initWapsAd()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {

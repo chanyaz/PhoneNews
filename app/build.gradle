@@ -129,6 +129,9 @@ dependencies {
     compile depend["rxpermissions"]
     compile depend["customactivityoncrash"]
 
+    // use -ktx for Kotlin
+    compile "android.arch.work:work-runtime-ktx:1.0.0-alpha02"
+
 }
 
 apply plugin: 'com.hc.gradle'

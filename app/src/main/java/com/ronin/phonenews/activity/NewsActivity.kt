@@ -9,23 +9,26 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.work.*
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.ronin.cc.adapter.NewsListAdapter
-import com.ronin.cc.http.XHttp
 import com.ronin.cc.loadmore.CustomLoadMoreView
 import com.ronin.cc.util.getScreenHeight
 import com.ronin.cc.util.isNetwork
 import com.ronin.cc.util.toast
+import com.ronin.net.manager.DisposableManager
 import com.ronin.net.observer.ProgressObserver
+import com.ronin.net.observer.SimpleObserver
 import com.ronin.phonenews.R
 import com.ronin.phonenews.bean.NewsBean
+import com.ronin.phonenews.http.ApiServiceImpl
 import com.ronin.phonenews.titles.ScaleTransitionPagerTitleView
 import com.ronin.phonenews.util.DanmakuHelper
 import com.ronin.phonenews.util.GsonUtil
+import com.ronin.phonenews.util.LogWorker
 import com.ronin.phonenews.util.XThread
 import com.ronin.pullrefreshlibrary.PullToRefreshView
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DefaultObserver
 import io.reactivex.schedulers.Schedulers
 import master.flame.danmaku.ui.widget.DanmakuView
 import net.lucode.hackware.magicindicator.FragmentContainerHelper
@@ -86,12 +89,35 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
     override fun handleMessage(msg: Message) {
         super.handleMessage(msg)
 
+//        testWork()
+
+    }
+
+    private fun testMovie() {
         MovieServiceImpl.getInstance().getTopMovie(0, 10)
-                .subscribe(object : ProgressObserver<Movie>(this) {
+                .subscribe(object : ProgressObserver<Movie>(this@NewsActivity) {
                     override fun onNext(t: Movie) {
                         Log.i(TAG, "onNext=${GsonUtil.toJson(t)}")
                     }
                 })
+    }
+
+
+    private fun testWork() {
+
+        val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+        val oneTimeWorkRequest = OneTimeWorkRequestBuilder<LogWorker>()
+                .setConstraints(constraints)
+                .build()
+
+
+        WorkManager.getInstance().enqueue(oneTimeWorkRequest)
+        val data = WorkManager.getInstance().getStatusById(oneTimeWorkRequest.id)
+
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,12 +157,11 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
         } else {
             0
         }
-
-        XHttp.serviceApi.getNewsList(path, word = mCurSearchWord,
+        ApiServiceImpl.getInstance().getNewsList(path, word = mCurSearchWord,
                 page = mCurPage, rand = rand)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : DefaultObserver<NewsBean>() {
+                .subscribe(object : SimpleObserver<NewsBean>() {
                     override fun onError(e: Throwable) {
                     }
 
@@ -296,6 +321,8 @@ class NewsActivity : BaseActivity(), PullToRefreshView.OnRefreshListener,
     override fun onDestroy() {
         super.onDestroy()
         danmakuHelper!!.destroy()
+        DisposableManager.getInstance().clear()
+
     }
 
 

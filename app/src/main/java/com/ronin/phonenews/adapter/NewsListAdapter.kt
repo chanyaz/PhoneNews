@@ -26,8 +26,6 @@ class NewsListAdapter
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(imageView)
 
-        RxJavaTest.start()
-
     }
 
 }

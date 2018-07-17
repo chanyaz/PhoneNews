@@ -14,6 +14,7 @@ public abstract class BaseServiceImpl<T> {
 
     protected BaseServiceImpl() {
         Net.getInstance().setBaseUrl(getBaseUrl());
+        Net.getInstance().setHeaders(getHeaders());
         service = Net.getInstance().getService(this.serviceClass());
     }
 

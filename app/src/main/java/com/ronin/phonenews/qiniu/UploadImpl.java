@@ -2,6 +2,7 @@ package com.ronin.phonenews.qiniu;
 
 import com.ronin.net.base.BaseServiceImpl;
 import com.ronin.net.helper.SchedulerHelper;
+import com.ronin.net.manager.SingletonManager;
 
 import io.reactivex.Observable;
 
@@ -13,7 +14,7 @@ import io.reactivex.Observable;
 public class UploadImpl extends BaseServiceImpl<UploadService> implements UploadService {
 
     public static UploadImpl getInstance() {
-        return get(UploadImpl.class);
+        return SingletonManager.get(UploadImpl.class);
     }
 
     @Override
